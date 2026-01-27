@@ -1,0 +1,729 @@
+{
+  "_description": "Comprehensive macOS operations config for voice commands",
+  "_version": "2.0",
+  "_instructions": "Add your own operations and NLP patterns, then run: python generate_dataset.py && mlx_lm.lora --model ./qwen-base --data . --train --iters 1500 --batch-size 4 --num-layers 8",
+
+  "categories": {
+    "apps": {
+      "open": "open -a \"{app}\"",
+      "quit": "osascript -e 'tell application \"{app}\" to quit'",
+      "hide": "osascript -e 'tell application \"System Events\" to set visible of process \"{app}\" to false'",
+      "show": "osascript -e 'tell application \"{app}\" to activate'"
+    },
+
+    "volume": {
+      "set": "osascript -e 'set volume output volume {level}'",
+      "up": "osascript -e 'set volume output volume ((output volume of (get volume settings)) + 10)'",
+      "down": "osascript -e 'set volume output volume ((output volume of (get volume settings)) - 10)'",
+      "mute": "osascript -e 'set volume output muted true'",
+      "unmute": "osascript -e 'set volume output muted false'",
+      "get": "osascript -e 'output volume of (get volume settings)'"
+    },
+
+    "brightness": {
+      "set": "brightness {level}",
+      "up": "osascript -e 'tell application \"System Events\" to key code 144'",
+      "down": "osascript -e 'tell application \"System Events\" to key code 145'"
+    },
+
+    "display": {
+      "sleep": "pmset displaysleepnow",
+      "lock": "pmset displaysleepnow",
+      "screenshot": "screencapture -i ~/Desktop/screenshot_$(date +%Y%m%d_%H%M%S).png",
+      "screenshot_full": "screencapture ~/Desktop/screenshot_$(date +%Y%m%d_%H%M%S).png",
+      "screenshot_window": "screencapture -w ~/Desktop/screenshot_$(date +%Y%m%d_%H%M%S).png",
+      "screenshot_clipboard": "screencapture -c"
+    },
+
+    "system": {
+      "sleep": "pmset sleepnow",
+      "restart": "osascript -e 'tell app \"System Events\" to restart'",
+      "shutdown": "osascript -e 'tell app \"System Events\" to shut down'",
+      "logout": "osascript -e 'tell app \"System Events\" to log out'",
+      "empty_trash": "osascript -e 'tell app \"Finder\" to empty trash'",
+      "show_desktop": "osascript -e 'tell app \"System Events\" to key code 103 using {command down, fn down}'",
+      "spotlight": "osascript -e 'tell app \"System Events\" to keystroke space using command down'",
+      "notification_center": "osascript -e 'tell app \"System Events\" to keystroke \"n\" using {command down, option down}'",
+      "force_quit_menu": "osascript -e 'tell app \"System Events\" to keystroke \"escape\" using {command down, option down}'"
+    },
+
+    "power": {
+      "caffeinate": "caffeinate -d",
+      "caffeinate_stop": "killall caffeinate",
+      "battery_status": "pmset -g batt",
+      "low_power_on": "sudo pmset -a lowpowermode 1",
+      "low_power_off": "sudo pmset -a lowpowermode 0"
+    },
+
+    "network": {
+      "wifi_off": "networksetup -setairportpower en0 off",
+      "wifi_on": "networksetup -setairportpower en0 on",
+      "wifi_status": "networksetup -getairportpower en0",
+      "wifi_network": "networksetup -getairportnetwork en0",
+      "ip_address": "ipconfig getifaddr en0",
+      "public_ip": "curl -s ifconfig.me",
+      "flush_dns": "sudo dscacheutil -flushcache"
+    },
+
+    "bluetooth": {
+      "on": "blueutil -p 1",
+      "off": "blueutil -p 0",
+      "status": "blueutil -p"
+    },
+
+    "window": {
+      "close": "osascript -e 'tell app \"System Events\" to keystroke \"w\" using command down'",
+      "minimize": "osascript -e 'tell app \"System Events\" to keystroke \"m\" using command down'",
+      "fullscreen": "osascript -e 'tell app \"System Events\" to keystroke \"f\" using {command down, control down}'",
+      "new_tab": "osascript -e 'tell app \"System Events\" to keystroke \"t\" using command down'",
+      "new_window": "osascript -e 'tell app \"System Events\" to keystroke \"n\" using command down'",
+      "close_all": "osascript -e 'tell app \"System Events\" to keystroke \"w\" using {command down, option down}'",
+      "cycle_windows": "osascript -e 'tell app \"System Events\" to keystroke \"`\" using command down'",
+      "mission_control": "osascript -e 'tell app \"System Events\" to key code 126 using control down'"
+    },
+
+    "keyboard": {
+      "copy": "osascript -e 'tell app \"System Events\" to keystroke \"c\" using command down'",
+      "paste": "osascript -e 'tell app \"System Events\" to keystroke \"v\" using command down'",
+      "cut": "osascript -e 'tell app \"System Events\" to keystroke \"x\" using command down'",
+      "undo": "osascript -e 'tell app \"System Events\" to keystroke \"z\" using command down'",
+      "redo": "osascript -e 'tell app \"System Events\" to keystroke \"z\" using {command down, shift down}'",
+      "save": "osascript -e 'tell app \"System Events\" to keystroke \"s\" using command down'",
+      "select_all": "osascript -e 'tell app \"System Events\" to keystroke \"a\" using command down'",
+      "find": "osascript -e 'tell app \"System Events\" to keystroke \"f\" using command down'",
+      "print": "osascript -e 'tell app \"System Events\" to keystroke \"p\" using command down'"
+    },
+
+    "media": {
+      "play_pause": "osascript -e 'tell app \"System Events\" to key code 49'",
+      "next": "osascript -e 'tell app \"System Events\" to key code 124 using command down'",
+      "previous": "osascript -e 'tell app \"System Events\" to key code 123 using command down'",
+      "play": "osascript -e 'tell app \"Music\" to play'",
+      "pause": "osascript -e 'tell app \"Music\" to pause'",
+      "stop": "osascript -e 'tell app \"Music\" to stop'"
+    },
+
+    "finder": {
+      "new_folder": "osascript -e 'tell app \"Finder\" to make new folder at desktop'",
+      "show_hidden": "defaults write com.apple.finder AppleShowAllFiles YES && killall Finder",
+      "hide_hidden": "defaults write com.apple.finder AppleShowAllFiles NO && killall Finder",
+      "show_path_bar": "defaults write com.apple.finder ShowPathbar -bool true && killall Finder",
+      "show_status_bar": "defaults write com.apple.finder ShowStatusBar -bool true && killall Finder"
+    },
+
+    "clipboard": {
+      "clear": "pbcopy < /dev/null",
+      "get": "pbpaste",
+      "copy_text": "echo \"{text}\" | pbcopy",
+      "copy_file": "cat \"{file}\" | pbcopy",
+      "paste": "pbpaste"
+    },
+
+    "speech": {
+      "say": "say \"{text}\"",
+      "say_voice": "say -v \"{voice}\" \"{text}\"",
+      "list_voices": "say -v '?'"
+    },
+
+    "macos": {
+      "spotlight_search": "mdfind \"{query}\"",
+      "spotlight_name": "mdfind -name \"{name}\"",
+      "file_metadata": "mdls \"{file}\"",
+      "software_update": "softwareupdate -l",
+      "software_install": "softwareupdate -i -a",
+      "open_url": "open \"{url}\"",
+      "open_app": "open -a \"{app}\"",
+      "trash": "trash \"{path}\"",
+      "xattr_list": "xattr \"{file}\"",
+      "xattr_remove": "xattr -c \"{file}\"",
+      "ditto_copy": "ditto \"{source}\" \"{dest}\""
+    },
+
+    "notifications": {
+      "show": "osascript -e 'display notification \"{message}\" with title \"{title}\"'",
+      "dnd_on": "shortcuts run \"Turn On Focus\"",
+      "dnd_off": "shortcuts run \"Turn Off Focus\""
+    },
+
+    "urls": {
+      "open": "open \"{url}\"",
+      "search_google": "open \"https://www.google.com/search?q={query}\"",
+      "search_youtube": "open \"https://www.youtube.com/results?search_query={query}\"",
+      "search_maps": "open \"https://maps.google.com/maps?q={query}\"",
+      "search_amazon": "open \"https://www.amazon.com/s?k={query}\"",
+      "search_github": "open \"https://github.com/search?q={query}\"",
+      "search_stackoverflow": "open \"https://stackoverflow.com/search?q={query}\""
+    },
+
+    "files": {
+      "create_file": "touch \"{path}\"",
+      "create_folder": "mkdir -p \"{path}\"",
+      "delete": "rm -rf \"{path}\"",
+      "move": "mv \"{source}\" \"{dest}\"",
+      "copy": "cp -r \"{source}\" \"{dest}\"",
+      "open_folder": "open \"{path}\"",
+      "reveal_in_finder": "open -R \"{path}\"",
+      "list": "ls -la",
+      "list_path": "ls -la \"{path}\"",
+      "find": "find . -name \"{pattern}\"",
+      "disk_usage": "du -sh \"{path}\"",
+      "symlink": "ln -s \"{source}\" \"{dest}\"",
+      "less": "less \"{file}\"",
+      "tree": "tree",
+      "tree_path": "tree \"{path}\"",
+      "tee": "tee \"{file}\"",
+      "stat": "stat \"{file}\"",
+      "file_type": "file \"{file}\""
+    },
+
+    "apps_apple": {
+      "messages_send": "osascript -e 'tell app \"Messages\" to send \"{text}\" to buddy \"{contact}\"'",
+      "messages_open": "osascript -e 'tell app \"Messages\" to activate'",
+      "reminder_create": "osascript -e 'tell app \"Reminders\" to make new reminder with properties {name:\"{text}\"}'",
+      "note_create": "osascript -e 'tell app \"Notes\" to make new note with properties {body:\"{text}\"}'",
+      "calendar_open": "open -a Calendar",
+      "mail_compose": "open \"mailto:{to}?subject={subject}&body={body}\""
+    },
+
+    "appearance": {
+      "dark_mode_on": "osascript -e 'tell app \"System Events\" to tell appearance preferences to set dark mode to true'",
+      "dark_mode_off": "osascript -e 'tell app \"System Events\" to tell appearance preferences to set dark mode to false'",
+      "dark_mode_toggle": "osascript -e 'tell app \"System Events\" to tell appearance preferences to set dark mode to not dark mode'"
+    },
+
+    "info": {
+      "time": "date +%H:%M",
+      "date": "date +%Y-%m-%d",
+      "datetime": "date",
+      "uptime": "uptime",
+      "disk_space": "df -h /",
+      "memory": "top -l 1 | grep PhysMem",
+      "macos_version": "sw_vers -productVersion",
+      "hostname": "hostname",
+      "whoami": "whoami",
+      "pwd": "pwd"
+    },
+
+    "git": {
+      "status": "git status",
+      "add_all": "git add .",
+      "add": "git add \"{file}\"",
+      "commit": "git commit -m \"{message}\"",
+      "push": "git push",
+      "pull": "git pull",
+      "fetch": "git fetch",
+      "branch": "git branch",
+      "branch_create": "git checkout -b \"{branch}\"",
+      "checkout": "git checkout \"{branch}\"",
+      "merge": "git merge \"{branch}\"",
+      "log": "git log --oneline -10",
+      "diff": "git diff",
+      "stash": "git stash",
+      "stash_pop": "git stash pop",
+      "clone": "git clone \"{url}\"",
+      "init": "git init",
+      "reset": "git reset --hard HEAD",
+      "remote": "git remote -v"
+    },
+
+    "docker": {
+      "ps": "docker ps",
+      "ps_all": "docker ps -a",
+      "images": "docker images",
+      "run": "docker run \"{image}\"",
+      "stop": "docker stop \"{container}\"",
+      "start": "docker start \"{container}\"",
+      "restart": "docker restart \"{container}\"",
+      "rm": "docker rm \"{container}\"",
+      "rmi": "docker rmi \"{image}\"",
+      "logs": "docker logs \"{container}\"",
+      "exec": "docker exec -it \"{container}\" /bin/bash",
+      "build": "docker build -t \"{tag}\" .",
+      "compose_up": "docker-compose up -d",
+      "compose_down": "docker-compose down",
+      "prune": "docker system prune -f"
+    },
+
+    "npm": {
+      "install": "npm install",
+      "install_package": "npm install \"{package}\"",
+      "install_dev": "npm install -D \"{package}\"",
+      "install_global": "npm install -g \"{package}\"",
+      "uninstall": "npm uninstall \"{package}\"",
+      "update": "npm update",
+      "start": "npm start",
+      "run": "npm run \"{script}\"",
+      "test": "npm test",
+      "build": "npm run build",
+      "init": "npm init -y",
+      "list": "npm list --depth=0",
+      "outdated": "npm outdated",
+      "audit": "npm audit",
+      "cache_clean": "npm cache clean --force"
+    },
+
+    "yarn": {
+      "install": "yarn install",
+      "add": "yarn add \"{package}\"",
+      "add_dev": "yarn add -D \"{package}\"",
+      "remove": "yarn remove \"{package}\"",
+      "start": "yarn start",
+      "run": "yarn \"{script}\"",
+      "build": "yarn build",
+      "test": "yarn test"
+    },
+
+    "python": {
+      "run": "python \"{file}\"",
+      "run3": "python3 \"{file}\"",
+      "pip_install": "pip install \"{package}\"",
+      "pip3_install": "pip3 install \"{package}\"",
+      "pip_uninstall": "pip uninstall \"{package}\"",
+      "pip_list": "pip list",
+      "pip_freeze": "pip freeze",
+      "venv_create": "python3 -m venv venv",
+      "venv_activate": "source venv/bin/activate",
+      "requirements": "pip install -r requirements.txt",
+      "jupyter": "jupyter notebook",
+      "pytest": "pytest",
+      "flask_run": "flask run",
+      "django_run": "python manage.py runserver"
+    },
+
+    "homebrew": {
+      "install": "brew install \"{package}\"",
+      "uninstall": "brew uninstall \"{package}\"",
+      "update": "brew update",
+      "upgrade": "brew upgrade",
+      "upgrade_package": "brew upgrade \"{package}\"",
+      "search": "brew search \"{query}\"",
+      "info": "brew info \"{package}\"",
+      "list": "brew list",
+      "cask_install": "brew install --cask \"{package}\"",
+      "cask_uninstall": "brew uninstall --cask \"{package}\"",
+      "cleanup": "brew cleanup",
+      "doctor": "brew doctor",
+      "services_list": "brew services list",
+      "services_start": "brew services start \"{service}\"",
+      "services_stop": "brew services stop \"{service}\"",
+      "services_restart": "brew services restart \"{service}\""
+    },
+
+    "mas": {
+      "search": "mas search \"{app}\"",
+      "install": "mas install \"{id}\"",
+      "list": "mas list",
+      "outdated": "mas outdated",
+      "upgrade": "mas upgrade"
+    },
+
+    "process": {
+      "list": "ps aux",
+      "top": "top",
+      "htop": "htop",
+      "kill": "kill \"{pid}\"",
+      "kill_force": "kill -9 \"{pid}\"",
+      "killall": "killall \"{name}\"",
+      "pkill": "pkill \"{pattern}\"",
+      "pgrep": "pgrep \"{pattern}\"",
+      "lsof_port": "lsof -i :{port}",
+      "activity": "open -a \"Activity Monitor\""
+    },
+
+    "network_tools": {
+      "ping": "ping -c 4 \"{host}\"",
+      "curl": "curl \"{url}\"",
+      "curl_head": "curl -I \"{url}\"",
+      "wget": "wget \"{url}\"",
+      "ssh": "ssh \"{user}@{host}\"",
+      "scp": "scp \"{source}\" \"{dest}\"",
+      "netstat": "netstat -an",
+      "ifconfig": "ifconfig",
+      "traceroute": "traceroute \"{host}\"",
+      "nslookup": "nslookup \"{domain}\"",
+      "dig": "dig \"{domain}\"",
+      "host": "host \"{domain}\"",
+      "whois": "whois \"{domain}\""
+    },
+
+    "archive": {
+      "zip": "zip -r \"{output}.zip\" \"{input}\"",
+      "unzip": "unzip \"{file}\"",
+      "tar_create": "tar -czvf \"{output}.tar.gz\" \"{input}\"",
+      "tar_extract": "tar -xzvf \"{file}\"",
+      "gzip": "gzip \"{file}\"",
+      "gunzip": "gunzip \"{file}\""
+    },
+
+    "text": {
+      "cat": "cat \"{file}\"",
+      "head": "head -n {lines} \"{file}\"",
+      "tail": "tail -n {lines} \"{file}\"",
+      "tail_follow": "tail -f \"{file}\"",
+      "grep": "grep -r \"{pattern}\" .",
+      "grep_file": "grep \"{pattern}\" \"{file}\"",
+      "grep_recursive": "grep -r \"{pattern}\" .",
+      "wc": "wc -l \"{file}\"",
+      "sort": "sort \"{file}\"",
+      "uniq": "uniq \"{file}\"",
+      "sed": "sed 's/{find}/{replace}/g' \"{file}\"",
+      "awk": "awk '{print $1}' \"{file}\"",
+      "diff": "diff \"{file1}\" \"{file2}\"",
+      "nano": "nano \"{file}\"",
+      "vim": "vim \"{file}\"",
+      "code": "code \"{file}\""
+    },
+
+    "permissions": {
+      "chmod": "chmod {mode} \"{file}\"",
+      "chmod_executable": "chmod +x \"{file}\"",
+      "chown": "chown {user}:{group} \"{file}\"",
+      "sudo": "sudo \"{command}\""
+    },
+
+    "disk": {
+      "df": "df -h",
+      "du": "du -sh *",
+      "du_path": "du -sh \"{path}\"",
+      "mount": "mount",
+      "diskutil_list": "diskutil list",
+      "diskutil_info": "diskutil info \"{disk}\"",
+      "diskutil_eject": "diskutil eject \"{disk}\""
+    },
+
+    "services": {
+      "mysql_start": "brew services start mysql",
+      "mysql_stop": "brew services stop mysql",
+      "postgres_start": "brew services start postgresql",
+      "postgres_stop": "brew services stop postgresql",
+      "redis_start": "brew services start redis",
+      "redis_stop": "brew services stop redis",
+      "nginx_start": "brew services start nginx",
+      "nginx_stop": "brew services stop nginx",
+      "nginx_reload": "nginx -s reload",
+      "mongodb_start": "brew services start mongodb-community",
+      "mongodb_stop": "brew services stop mongodb-community"
+    },
+
+    "database": {
+      "mysql": "mysql -u root -p",
+      "psql": "psql -U postgres",
+      "redis_cli": "redis-cli",
+      "mongo": "mongosh",
+      "sqlite": "sqlite3 \"{database}\""
+    },
+
+    "xcode": {
+      "build": "xcodebuild",
+      "clean": "xcodebuild clean",
+      "test": "xcodebuild test",
+      "simulators": "xcrun simctl list",
+      "simulator_boot": "xcrun simctl boot \"{device}\"",
+      "simulator_open": "open -a Simulator",
+      "derived_data_clear": "rm -rf ~/Library/Developer/Xcode/DerivedData/*"
+    },
+
+    "flutter": {
+      "run": "flutter run",
+      "build": "flutter build",
+      "clean": "flutter clean",
+      "pub_get": "flutter pub get",
+      "doctor": "flutter doctor",
+      "devices": "flutter devices",
+      "create": "flutter create \"{project}\"",
+      "test": "flutter test"
+    },
+
+    "rust": {
+      "build": "cargo build",
+      "run": "cargo run",
+      "test": "cargo test",
+      "new": "cargo new \"{project}\"",
+      "check": "cargo check",
+      "clean": "cargo clean",
+      "doc": "cargo doc --open",
+      "update": "cargo update"
+    },
+
+    "go": {
+      "run": "go run \"{file}\"",
+      "build": "go build",
+      "test": "go test",
+      "get": "go get \"{package}\"",
+      "mod_init": "go mod init \"{module}\"",
+      "mod_tidy": "go mod tidy",
+      "fmt": "go fmt ./..."
+    },
+
+    "aws": {
+      "configure": "aws configure",
+      "s3_ls": "aws s3 ls",
+      "s3_cp": "aws s3 cp \"{source}\" \"{dest}\"",
+      "s3_sync": "aws s3 sync \"{source}\" \"{dest}\"",
+      "ec2_ls": "aws ec2 describe-instances",
+      "lambda_ls": "aws lambda list-functions"
+    },
+
+    "misc": {
+      "history": "history",
+      "clear": "clear",
+      "exit": "exit",
+      "man": "man \"{command}\"",
+      "which": "which \"{command}\"",
+      "alias": "alias",
+      "env": "env",
+      "export": "export {var}={value}",
+      "echo": "echo \"{text}\"",
+      "date": "date",
+      "cal": "cal",
+      "bc": "bc",
+      "yes": "yes",
+      "sleep": "sleep {seconds}",
+      "watch": "watch -n {interval} \"{command}\""
+    }
+  },
+
+  "nlp_patterns": {
+    "apps": {
+      "open": ["open {app}", "launch {app}", "start {app}", "run {app}", "fire up {app}"],
+      "quit": ["quit {app}", "close {app}", "exit {app}", "kill {app}", "stop {app}"],
+      "hide": ["hide {app}", "hide {app} window"],
+      "show": ["show {app}", "bring up {app}", "switch to {app}"]
+    },
+    "volume": {
+      "set": ["set volume to {level}", "volume to {level}", "volume at {level}", "volume {level}"],
+      "up": ["volume up", "louder", "turn up volume", "increase volume"],
+      "down": ["volume down", "quieter", "turn down volume", "decrease volume"],
+      "mute": ["mute", "mute audio", "silence", "turn off sound"],
+      "unmute": ["unmute", "unmute audio", "turn on sound"]
+    },
+    "display": {
+      "screenshot": ["take a screenshot", "screenshot", "capture screen", "screen capture"],
+      "screenshot_full": ["full screenshot", "screenshot entire screen"],
+      "lock": ["lock screen", "lock my mac", "lock computer"]
+    },
+    "system": {
+      "sleep": ["sleep", "go to sleep", "put mac to sleep"],
+      "empty_trash": ["empty trash", "empty the trash", "clear trash"],
+      "spotlight": ["spotlight", "open spotlight", "search spotlight"]
+    },
+    "network": {
+      "wifi_off": ["turn off wifi", "disable wifi", "wifi off"],
+      "wifi_on": ["turn on wifi", "enable wifi", "wifi on"],
+      "ip_address": ["what is my ip", "show ip address", "my ip"],
+      "public_ip": ["what is my public ip", "public ip address", "external ip"]
+    },
+    "git": {
+      "status": ["git status", "check git status", "show git status"],
+      "add_all": ["git add all", "stage all changes", "add all files", "git add ."],
+      "commit": ["git commit {message}", "commit with message {message}", "commit {message}"],
+      "push": ["git push", "push to remote", "push changes"],
+      "pull": ["git pull", "pull from remote", "pull changes"],
+      "branch_create": ["create branch {branch}", "new branch {branch}", "git branch {branch}"],
+      "checkout": ["checkout {branch}", "switch to {branch}", "git checkout {branch}"],
+      "clone": ["clone {url}", "git clone {url}"],
+      "log": ["git log", "show git log", "commit history"],
+      "diff": ["git diff", "show changes", "show diff"],
+      "stash": ["git stash", "stash changes"],
+      "stash_pop": ["git stash pop", "pop stash", "restore stash"]
+    },
+    "docker": {
+      "ps": ["docker ps", "list containers", "show running containers"],
+      "ps_all": ["docker ps all", "list all containers", "show all containers"],
+      "images": ["docker images", "list docker images", "show images"],
+      "stop": ["docker stop {container}", "stop container {container}"],
+      "logs": ["docker logs {container}", "show logs for {container}"],
+      "build": ["docker build", "build docker image"],
+      "compose_up": ["docker compose up", "start docker compose", "compose up"],
+      "compose_down": ["docker compose down", "stop docker compose", "compose down"],
+      "prune": ["docker prune", "clean docker", "remove unused docker"]
+    },
+    "npm": {
+      "install": ["npm install", "install dependencies", "install packages"],
+      "install_package": ["npm install {package}", "install {package}", "add {package}"],
+      "start": ["npm start", "start server", "run start"],
+      "test": ["npm test", "run tests", "test"],
+      "build": ["npm build", "build project", "run build"],
+      "run": ["npm run {script}", "run script {script}"]
+    },
+    "python": {
+      "run": ["python {file}", "run {file}", "execute {file}"],
+      "pip_install": ["pip install {package}", "install {package} with pip"],
+      "pip_list": ["pip list", "list installed packages", "show pip packages"],
+      "venv_create": ["create virtual environment", "create venv", "make venv"],
+      "venv_activate": ["activate venv", "source venv", "activate virtual environment"],
+      "pytest": ["run pytest", "pytest", "run python tests"],
+      "jupyter": ["jupyter notebook", "start jupyter", "open jupyter"]
+    },
+    "homebrew": {
+      "install": ["brew install {package}", "install {package} with homebrew"],
+      "uninstall": ["brew uninstall {package}", "uninstall {package}", "remove {package}"],
+      "update": ["brew update", "update homebrew"],
+      "upgrade": ["brew upgrade", "upgrade all packages"],
+      "search": ["brew search {query}", "search homebrew for {query}"],
+      "list": ["brew list", "list installed packages", "show brew packages"],
+      "services_list": ["brew services", "list services", "show services"]
+    },
+    "process": {
+      "list": ["list processes", "show processes", "ps", "ps aux"],
+      "top": ["top", "show top", "system monitor"],
+      "kill": ["kill process {pid}", "kill {pid}"],
+      "killall": ["kill all {name}", "killall {name}"],
+      "lsof_port": ["what is using port {port}", "lsof port {port}", "check port {port}"]
+    },
+    "network_tools": {
+      "ping": ["ping {host}", "ping test {host}"],
+      "curl": ["curl {url}", "fetch {url}", "get {url}"],
+      "curl_head": ["curl head {url}", "check url {url}"],
+      "ssh": ["ssh to {host}", "connect to {host}", "ssh {host}"],
+      "ifconfig": ["ifconfig", "show network interfaces", "network info"],
+      "netstat": ["netstat", "show network connections", "network status"],
+      "traceroute": ["traceroute {host}", "trace route to {host}"],
+      "nslookup": ["nslookup {domain}", "dns lookup {domain}"],
+      "whois": ["whois {domain}", "lookup {domain}"]
+    },
+    "files": {
+      "list": ["ls", "list files", "show files", "dir"],
+      "create_file": ["touch {path}", "create file {path}", "new file {path}"],
+      "create_folder": ["mkdir {path}", "create folder {path}", "new folder {path}", "make directory {path}"],
+      "delete": ["rm {path}", "delete {path}", "remove {path}"],
+      "move": ["mv {source} {dest}", "move {source} to {dest}"],
+      "copy": ["cp {source} {dest}", "copy {source} to {dest}"],
+      "find": ["find {pattern}", "find files {pattern}", "search files {pattern}"],
+      "disk_usage": ["du {path}", "disk usage {path}", "size of {path}"],
+      "symlink": ["ln {source} {dest}", "symlink {source} to {dest}", "create symlink {source}", "link {source} to {dest}"],
+      "less": ["less {file}", "view {file}", "page {file}", "scroll {file}"],
+      "tree": ["tree", "show tree", "directory tree", "folder tree"],
+      "stat": ["stat {file}", "file info {file}", "file details {file}"],
+      "file_type": ["file {file}", "what type is {file}", "file type {file}"]
+    },
+    "clipboard": {
+      "copy_text": ["copy {text} to clipboard", "clipboard copy {text}", "pbcopy {text}"],
+      "copy_file": ["copy file {file} to clipboard", "clipboard {file}"],
+      "paste": ["paste from clipboard", "pbpaste", "clipboard paste", "get clipboard"],
+      "clear": ["clear clipboard", "empty clipboard"]
+    },
+    "speech": {
+      "say": ["say {text}", "speak {text}", "read aloud {text}", "text to speech {text}"],
+      "list_voices": ["list voices", "show voices", "available voices"]
+    },
+    "macos": {
+      "spotlight_search": ["mdfind {query}", "spotlight {query}", "spotlight search {query}", "search mac for {query}"],
+      "spotlight_name": ["find file named {name}", "search for file {name}", "locate {name}"],
+      "file_metadata": ["mdls {file}", "metadata {file}", "file metadata {file}"],
+      "software_update": ["check for updates", "software update", "check updates", "list updates"],
+      "software_install": ["install updates", "install all updates", "update mac", "update macos"]
+    },
+    "text": {
+      "cat": ["cat {file}", "show {file}", "display {file}", "read {file}"],
+      "head": ["head {file}", "show first lines of {file}", "top of {file}"],
+      "tail": ["tail {file}", "show last lines of {file}", "end of {file}"],
+      "tail_follow": ["tail -f {file}", "follow {file}", "watch {file}"],
+      "grep": ["grep {pattern}", "search for {pattern}", "find {pattern}"],
+      "grep_recursive": ["grep -r {pattern}", "search all files for {pattern}"],
+      "wc": ["wc {file}", "count lines in {file}", "line count {file}"],
+      "nano": ["nano {file}", "edit {file} with nano"],
+      "vim": ["vim {file}", "edit {file} with vim", "vi {file}"],
+      "code": ["code {file}", "open {file} in vscode", "vscode {file}"],
+      "diff": ["diff {file1} {file2}", "compare {file1} {file2}"]
+    },
+    "archive": {
+      "zip": ["zip {output} {input}", "create zip {output}", "compress {input}"],
+      "unzip": ["unzip {file}", "extract {file}", "decompress {file}"],
+      "tar_create": ["tar {output} {input}", "create tar {output}", "archive {input}"],
+      "tar_extract": ["untar {file}", "extract tar {file}", "tar extract {file}"]
+    },
+    "permissions": {
+      "chmod": ["chmod {mode} {file}", "change permissions {file}"],
+      "chmod_executable": ["make {file} executable", "chmod +x {file}"],
+      "chown": ["chown {user} {file}", "change owner {file}"]
+    },
+    "disk": {
+      "df": ["df", "disk free", "show disk space", "free space"],
+      "du": ["du", "disk usage", "folder sizes"],
+      "diskutil_list": ["diskutil list", "list disks", "show disks"],
+      "diskutil_eject": ["eject {disk}", "eject disk", "unmount {disk}"]
+    },
+    "services": {
+      "mysql_start": ["start mysql", "mysql start"],
+      "mysql_stop": ["stop mysql", "mysql stop"],
+      "postgres_start": ["start postgres", "postgres start", "start postgresql"],
+      "postgres_stop": ["stop postgres", "postgres stop", "stop postgresql"],
+      "redis_start": ["start redis", "redis start"],
+      "redis_stop": ["stop redis", "redis stop"],
+      "nginx_start": ["start nginx", "nginx start"],
+      "nginx_stop": ["stop nginx", "nginx stop"]
+    },
+    "database": {
+      "mysql": ["mysql", "connect to mysql", "open mysql"],
+      "psql": ["psql", "connect to postgres", "open postgres"],
+      "redis_cli": ["redis cli", "connect to redis", "open redis"],
+      "mongo": ["mongo", "connect to mongodb", "open mongo"]
+    },
+    "appearance": {
+      "dark_mode_toggle": ["dark mode", "toggle dark mode", "switch theme"],
+      "dark_mode_on": ["enable dark mode", "turn on dark mode"],
+      "dark_mode_off": ["disable dark mode", "turn off dark mode", "light mode"]
+    },
+    "info": {
+      "time": ["what time is it", "show time", "current time"],
+      "date": ["what is the date", "show date", "today's date"],
+      "datetime": ["date and time", "show datetime"],
+      "uptime": ["uptime", "how long has mac been on", "system uptime"],
+      "disk_space": ["disk space", "how much space", "storage"],
+      "memory": ["memory usage", "show memory", "ram usage"],
+      "hostname": ["hostname", "what is my hostname", "computer name"],
+      "whoami": ["whoami", "who am i", "current user"],
+      "pwd": ["pwd", "current directory", "where am i", "print working directory"]
+    },
+    "misc": {
+      "history": ["history", "command history", "show history"],
+      "clear": ["clear", "clear screen", "cls"],
+      "man": ["man {command}", "manual for {command}", "help {command}"],
+      "which": ["which {command}", "where is {command}", "find {command}"],
+      "echo": ["echo {text}", "print {text}"],
+      "env": ["env", "show environment", "environment variables"],
+      "cal": ["cal", "calendar", "show calendar"]
+    },
+    "keyboard": {
+      "copy": ["copy", "copy that"],
+      "paste": ["paste", "paste that"],
+      "cut": ["cut", "cut that"],
+      "undo": ["undo", "undo that"],
+      "redo": ["redo", "redo that"],
+      "save": ["save", "save file"],
+      "select_all": ["select all", "select everything"],
+      "find": ["find", "search", "find in page"]
+    },
+    "window": {
+      "close": ["close window", "close this window"],
+      "minimize": ["minimize", "minimize window"],
+      "fullscreen": ["fullscreen", "full screen", "maximize"],
+      "new_tab": ["new tab", "open new tab"],
+      "new_window": ["new window", "open new window"]
+    },
+    "media": {
+      "play": ["play", "play music", "resume"],
+      "pause": ["pause", "pause music", "stop music"],
+      "next": ["next track", "next song", "skip"],
+      "previous": ["previous track", "previous song", "go back"]
+    }
+  },
+
+  "sample_values": {
+    "apps": ["safari", "chrome", "firefox", "terminal", "finder", "slack", "discord", "spotify", "vscode", "xcode"],
+    "packages": ["node", "python", "git", "wget", "curl", "ffmpeg", "postgresql", "redis", "nginx"],
+    "branches": ["main", "master", "develop", "feature", "bugfix", "release"],
+    "containers": ["web", "api", "db", "redis", "nginx"],
+    "ports": ["3000", "8080", "5000", "80", "443", "5432", "6379"],
+    "hosts": ["google.com", "github.com", "localhost", "192.168.1.1"],
+    "levels": ["10", "20", "30", "40", "50", "60", "70", "80", "90", "100"],
+    "files": ["app.py", "index.js", "main.go", "README.md", "package.json", "config.json", ".env"],
+    "paths": ["~/Downloads", "~/Documents", "~/Desktop", "/tmp", ".", "src", "dist"],
+    "domains": ["google.com", "github.com", "example.com", "localhost"],
+    "commands": ["git", "node", "python", "docker", "npm", "brew"],
+    "modes": ["755", "644", "777", "+x"],
+    "users": ["root", "admin", "$(whoami)"],
+    "disks": ["disk0", "disk1", "disk2"]
+  }
+}

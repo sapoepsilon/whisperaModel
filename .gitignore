@@ -1,0 +1,29 @@
+# Model files (hosted on HuggingFace)
+qwen-base/
+whispera-merged/
+adapters/
+*.safetensors
+
+# Python
+venv/
+__pycache__/
+*.pyc
+*.pyo
+.Python
+env/
+.env
+
+# Training outputs
+train.jsonl
+valid.jsonl
+
+# macOS
+.DS_Store
+*.swp
+
+# IDE
+.vscode/
+.idea/
+
+# Misc
+*.log
