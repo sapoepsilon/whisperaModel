@@ -1,7 +1,7 @@
 {
   "_description": "Comprehensive macOS operations config for voice commands",
   "_version": "2.0",
-  "_instructions": "Add your own operations and NLP patterns, then run: python generate_dataset.py && mlx_lm.lora --model ./qwen-base --data . --train --iters 1500 --batch-size 4 --num-layers 8",
+  "_instructions": "Add operations here - they work immediately via pattern matching! Retraining optional for best accuracy.",
 
   "categories": {
     "apps": {
@@ -18,6 +18,15 @@
       "mute": "osascript -e 'set volume output muted true'",
       "unmute": "osascript -e 'set volume output muted false'",
       "get": "osascript -e 'output volume of (get volume settings)'"
+    },
+
+    "audio": {
+      "list_devices": "system_profiler SPAudioDataType",
+      "list_output": "system_profiler SPAudioDataType | grep -A2 'Output'",
+      "list_input": "system_profiler SPAudioDataType | grep -A2 'Input'",
+      "switch_output": "SwitchAudioSource -s \"{device}\"",
+      "switch_input": "SwitchAudioSource -t input -s \"{device}\"",
+      "_comment": "switch commands require: brew install switchaudio-osx"
     },
 
     "brightness": {
@@ -485,17 +494,24 @@
 
   "nlp_patterns": {
     "apps": {
-      "open": ["open {app}", "launch {app}", "start {app}", "run {app}", "fire up {app}"],
-      "quit": ["quit {app}", "close {app}", "exit {app}", "kill {app}", "stop {app}"],
-      "hide": ["hide {app}", "hide {app} window"],
-      "show": ["show {app}", "bring up {app}", "switch to {app}"]
+      "open": ["open {app}", "launch {app}", "start {app}", "run {app}", "fire up {app}", "bring up {app}", "access {app}", "load {app}", "get {app}", "pop open {app}", "boot up {app}", "spin up {app}", "kick off {app}", "initialize {app}", "engage {app}", "start up {app}", "power on {app}"],
+      "quit": ["quit {app}", "close {app}", "exit {app}", "kill {app}", "stop {app}", "shut down {app}", "terminate {app}", "end {app}", "force quit {app}", "shut {app}", "power off {app}", "turn off {app}", "close out {app}", "kill process {app}", "stop running {app}", "shut off {app}"],
+      "hide": ["hide {app}", "hide {app} window", "minimize {app}", "send {app} to background", "conceal {app}", "make {app} invisible"],
+      "show": ["show {app}", "bring up {app}", "switch to {app}", "focus {app}", "activate {app}", "bring {app} to front", "display {app}", "foreground {app}", "pull up {app}"]
     },
     "volume": {
-      "set": ["set volume to {level}", "volume to {level}", "volume at {level}", "volume {level}"],
-      "up": ["volume up", "louder", "turn up volume", "increase volume"],
-      "down": ["volume down", "quieter", "turn down volume", "decrease volume"],
-      "mute": ["mute", "mute audio", "silence", "turn off sound"],
-      "unmute": ["unmute", "unmute audio", "turn on sound"]
+      "set": ["set volume to {level}", "volume to {level}", "volume at {level}", "volume {level}", "change volume to {level}", "set sound to {level}", "adjust volume to {level}", "make volume {level}", "volume level {level}", "set audio to {level} percent", "change sound to {level}"],
+      "up": ["volume up", "louder", "turn up volume", "increase volume", "make it louder", "pump up volume", "raise volume", "boost volume", "amplify", "turn sound up", "increase sound", "volume higher", "more volume"],
+      "down": ["volume down", "quieter", "turn down volume", "decrease volume", "make it quieter", "lower volume", "reduce volume", "turn sound down", "decrease sound", "volume lower", "less volume", "soften", "quiet down"],
+      "mute": ["mute", "mute audio", "silence", "turn off sound", "shut up", "quiet", "no sound", "sound off", "cut sound", "silence audio", "mute speakers", "turn off audio", "disable sound", "kill sound"],
+      "unmute": ["unmute", "unmute audio", "turn on sound", "sound on", "enable sound", "restore sound", "bring back sound", "audio on", "turn on audio", "enable audio"]
+    },
+    "audio": {
+      "list_devices": ["list audio devices", "show audio devices", "audio devices"],
+      "list_output": ["list audio output", "show output devices", "audio output"],
+      "list_input": ["list audio input", "show input devices", "audio input", "microphones"],
+      "switch_output": ["switch audio output to {device}", "switch output to {device}", "change output device to {device}", "change output to {device}", "set output to {device}", "use {device} for audio", "output to {device}"],
+      "switch_input": ["switch audio input to {device}", "switch input to {device}", "change input device to {device}", "change input to {device}", "set input to {device}", "use {device} as microphone", "input to {device}"]
     },
     "display": {
       "screenshot": ["take a screenshot", "screenshot", "capture screen", "screen capture"],
@@ -503,9 +519,12 @@
       "lock": ["lock screen", "lock my mac", "lock computer"]
     },
     "system": {
-      "sleep": ["sleep", "go to sleep", "put mac to sleep"],
-      "empty_trash": ["empty trash", "empty the trash", "clear trash"],
-      "spotlight": ["spotlight", "open spotlight", "search spotlight"]
+      "sleep": ["sleep", "go to sleep", "put mac to sleep", "suspend", "hibernate", "standby", "sleep mode", "sleep now", "put to sleep", "mac sleep", "sleep computer"],
+      "restart": ["restart", "reboot", "restart mac", "reboot mac", "restart computer", "system restart", "soft reboot", "restart now", "reboot system", "restart machine"],
+      "shutdown": ["shutdown", "shut down", "power off", "turn off", "shut down mac", "power down", "shutdown mac", "turn off mac", "system shutdown", "shutdown now", "kill power"],
+      "logout": ["logout", "log out", "sign out", "logout user", "switch user", "end session", "logout now", "log out now"],
+      "empty_trash": ["empty trash", "empty the trash", "clear trash", "clean trash", "delete trash", "trash empty", "clear bin", "empty bin", "trash delete"],
+      "spotlight": ["spotlight", "open spotlight", "search spotlight", "launch spotlight", "spotlight search", "mac search", "find spotlight"]
     },
     "network": {
       "wifi_off": ["turn off wifi", "disable wifi", "wifi off"],
@@ -514,18 +533,24 @@
       "public_ip": ["what is my public ip", "public ip address", "external ip"]
     },
     "git": {
-      "status": ["git status", "check git status", "show git status"],
-      "add_all": ["git add all", "stage all changes", "add all files", "git add ."],
-      "commit": ["git commit {message}", "commit with message {message}", "commit {message}"],
-      "push": ["git push", "push to remote", "push changes"],
-      "pull": ["git pull", "pull from remote", "pull changes"],
-      "branch_create": ["create branch {branch}", "new branch {branch}", "git branch {branch}"],
-      "checkout": ["checkout {branch}", "switch to {branch}", "git checkout {branch}"],
-      "clone": ["clone {url}", "git clone {url}"],
-      "log": ["git log", "show git log", "commit history"],
-      "diff": ["git diff", "show changes", "show diff"],
-      "stash": ["git stash", "stash changes"],
-      "stash_pop": ["git stash pop", "pop stash", "restore stash"]
+      "status": ["git status", "check git status", "show git status", "repository status", "repo status", "whats the status", "current status", "git state", "status check", "check repo"],
+      "add": ["git add {file}", "add {file}", "stage {file}", "track {file}"],
+      "add_all": ["git add all", "stage all changes", "add all files", "git add .", "stage everything", "add all", "stage all", "track all", "git add everything"],
+      "commit": ["git commit {message}", "commit with message {message}", "commit {message}", "save changes with {message}", "commit code {message}", "create commit {message}", "commit files {message}"],
+      "push": ["git push", "push", "push to remote", "push changes", "upload changes", "send to remote", "push code", "push commits", "push to origin", "push branch"],
+      "pull": ["git pull", "pull", "pull from remote", "pull changes", "download changes", "fetch and merge", "get updates", "pull code", "sync repo", "update from remote"],
+      "fetch": ["git fetch", "fetch remote", "fetch changes", "download refs", "fetch updates", "check remote"],
+      "branch": ["git branch", "list branches", "show branches", "all branches", "which branch", "current branch", "branch list"],
+      "branch_create": ["create branch {branch}", "new branch {branch}", "git branch create {branch}", "make branch {branch}", "start branch {branch}", "add branch {branch}"],
+      "checkout": ["checkout {branch}", "switch to {branch}", "git checkout {branch}", "change to branch {branch}", "move to {branch}", "go to {branch}"],
+      "merge": ["merge {branch}", "git merge {branch}", "merge branch {branch}", "combine {branch}", "integrate {branch}"],
+      "clone": ["clone {url}", "git clone {url}", "download repo {url}", "copy repository {url}", "get repo {url}"],
+      "log": ["git log", "show git log", "commit history", "view history", "recent commits", "history log", "what changed", "show commits"],
+      "diff": ["git diff", "show changes", "show diff", "what changed", "view diff", "compare changes", "check differences", "uncommitted changes"],
+      "stash": ["git stash", "stash changes", "save for later", "temporarily save", "stash work", "hide changes", "shelve changes"],
+      "stash_pop": ["git stash pop", "pop stash", "restore stash", "apply stash", "unstash", "restore stashed", "bring back stash"],
+      "reset": ["git reset", "undo changes", "reset files", "unstage", "reset hard", "discard changes"],
+      "remote": ["git remote", "show remotes", "list remotes", "remote urls", "where is remote"]
     },
     "docker": {
       "ps": ["docker ps", "list containers", "show running containers"],
@@ -686,14 +711,14 @@
       "cal": ["cal", "calendar", "show calendar"]
     },
     "keyboard": {
-      "copy": ["copy", "copy that"],
-      "paste": ["paste", "paste that"],
-      "cut": ["cut", "cut that"],
-      "undo": ["undo", "undo that"],
-      "redo": ["redo", "redo that"],
-      "save": ["save", "save file"],
-      "select_all": ["select all", "select everything"],
-      "find": ["find", "search", "find in page"]
+      "copy": ["copy", "copy that", "copy this", "copy selection", "copy text", "duplicate", "copy to clipboard", "ctrl c", "command c"],
+      "paste": ["paste", "paste that", "paste this", "paste here", "paste in", "insert", "paste from clipboard", "ctrl v", "command v"],
+      "cut": ["cut", "cut that", "cut this", "cut selection", "cut text", "remove and copy", "ctrl x", "command x"],
+      "undo": ["undo", "undo that", "undo this", "undo last", "go back", "revert", "ctrl z", "command z", "undo action"],
+      "redo": ["redo", "redo that", "redo this", "redo last", "do again", "repeat action", "ctrl shift z", "command shift z"],
+      "save": ["save", "save file", "save this", "save document", "save changes", "ctrl s", "command s", "save work", "store file"],
+      "select_all": ["select all", "select everything", "select entire", "highlight all", "choose all", "ctrl a", "command a", "select entire document"],
+      "find": ["find", "search", "find in page", "look for", "search for", "locate", "ctrl f", "command f", "find text"]
     },
     "window": {
       "close": ["close window", "close this window"],
@@ -703,10 +728,10 @@
       "new_window": ["new window", "open new window"]
     },
     "media": {
-      "play": ["play", "play music", "resume"],
-      "pause": ["pause", "pause music", "stop music"],
-      "next": ["next track", "next song", "skip"],
-      "previous": ["previous track", "previous song", "go back"]
+      "play": ["play", "play music", "resume", "start music", "begin playing", "resume playback", "unpause", "continue music", "start playing", "hit play", "press play"],
+      "pause": ["pause", "pause music", "stop music", "halt music", "freeze music", "pause playback", "stop playing", "pause player", "music pause", "pause track"],
+      "next": ["next track", "next song", "skip", "skip track", "skip song", "forward", "next", "advance", "go next", "move forward", "next please", "play next"],
+      "previous": ["previous track", "previous song", "go back", "back", "last song", "previous", "rewind", "go previous", "last track", "play previous", "step back"]
     }
   },
 
