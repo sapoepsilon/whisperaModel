@@ -16,6 +16,12 @@ env/
 # Training outputs
 train.jsonl
 valid.jsonl
+semantic_keywords.json
+typo_patterns.json
+test_results.json
+
+# Serverless
+.serverless/
 
 # macOS
 .DS_Store
